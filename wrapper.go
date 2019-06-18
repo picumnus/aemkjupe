@@ -166,11 +166,14 @@ func (a *Amqp) connect() error {
 		return nil
 	}
 
-	err = ch.QueueBind(q.Name, "", exName, false, nil)
-	if err != nil {
-		return err
+	if exName != "" {
+		err = ch.QueueBind(q.Name, "", exName, false, nil)
+		if err != nil {
+			return err
+		}
+		a.log.Debugf("%s: queue bind ok", name)
 	}
-	a.log.Debugf("%s: queue bind ok", name)
+
 	msgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
 	if err != nil {
 		return err
